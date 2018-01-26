@@ -1,4 +1,3 @@
-
 pragma solidity ^0.4.16;
 
 interface token {
@@ -9,6 +8,7 @@ contract Crowdsale {
     address public beneficiary;
     uint public fundingGoal;
     uint public amountRaised;
+    uint public start;
     uint public deadline;
     uint public price;
     token public tokenReward;
@@ -32,9 +32,10 @@ contract Crowdsale {
         address addressOfTokenUsedAsReward
     )public {
         beneficiary = ifSuccessfulSendTo;
-        fundingGoal = 1150 * 1 ether;
-        deadline = now + 21600 * 1 minutes;
-        price = 0.00083393763 * 1 ether;
+        fundingGoal = 700 * 1 ether;
+        start = 1517302800;
+        deadline = 1518512400;
+        price = 1000;
         tokenReward = token(addressOfTokenUsedAsReward);
     }
 
@@ -44,11 +45,11 @@ contract Crowdsale {
      * The function without name is the default function that is called whenever anyone sends funds to a contract
      */
     function () public payable {
-        require(!crowdsaleClosed);
+       require(now > start && now < deadline);
         uint amount = msg.value;
         balanceOf[msg.sender] += amount;
         amountRaised += amount;
-        tokenReward.transfer(msg.sender, amount / price);
+        tokenReward.transfer(msg.sender, amount * price);
         FundTransfer(msg.sender, amount, true);
     }
 
